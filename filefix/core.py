@@ -1,3 +1,4 @@
+import yaml
 import typer
 import os
 from typing import Dict, Union
@@ -84,6 +85,139 @@ def organize(directory: str = typer.Argument(".", help="Directory to organize"))
             except OSError as e:
                 typer.echo(f"Error moving '{filename}': {e}")
                 print(f"Error moving '{filename}': {e}")
+
+@app.command()
+def create_structure(
+    template_path: str = typer.Argument(..., help="Path to the YAML template file"),
+    target_dir: str = typer.Argument(
+        ".", 
+        help="Directory where the structure will be created"
+    ),
+    force: bool = typer.Option(
+        False, 
+        "--force", "-f",
+        help="Overwrite existing files and directories"
+    )
+):
+    """
+    Create a folder structure based on a YAML template.
+    
+    The YAML template should define the folder structure like this:
+    
+    project_name/:
+      README.md: |
+        # Project Title
+        Created on: {{date}}
+      src/:
+        _init_.py: ""
+        main.py: |
+          def main():
+              print("Hello, World!")
+      tests/:
+        _init_.py: ""
+        test_main.py: ""
+    """
+    try:
+        
+        with open(template_path, 'r', encoding='utf-8') as f:
+            template = f.read()
+            
+        
+        template_vars = {
+            'date': datetime.now().strftime('%Y-%m-%d')
+        }
+        
+        
+        for var, value in template_vars.items():
+            template = template.replace(f'{{{{{var}}}}}', value)
+            
+        
+        structure = yaml.safe_load(template)
+        
+        if not structure:
+            typer.echo("Error: Empty or invalid YAML template")
+            raise typer.Exit(1)
+            
+        target_path = Path(target_dir).resolve()
+        target_path.mkdir(parents=True, exist_ok=True)
+        
+        created = process_structure(structure, target_path, force)
+        
+        typer.echo(f"\n✅ Successfully created {created['files']} files and {created['folders']} folders in {target_path}")
+        
+    except FileNotFoundError:
+        typer.echo(f"Error: Template file not found: {template_path}")
+        raise typer.Exit(1)
+    except yaml.YAMLError as e:
+        typer.echo(f"Error parsing YAML template: {e}")
+        raise typer.Exit(1)
+    except Exception as e:
+        typer.echo(f"An error occurred: {e}")
+        raise typer.Exit(1)
+
+
+def process_structure(structure: Union[Dict, str], base_path: Path, force: bool) -> Dict[str, int]:
+    counts = {'files': 0, 'folders': 0}
+    
+    if isinstance(structure, str):
+        base_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        if base_path.exists() and not force:
+            typer.echo(f"Skipping existing file (use --force to overwrite): {base_path}")
+            return counts
+            
+        base_path.write_text(structure, encoding='utf-8')
+        typer.echo(f"Created file: {base_path}")
+        counts['files'] = 1
+        return counts
+        
+    for name, content in structure.items():
+        if name.endswith('/'):
+            name = name.rstrip('/')
+            is_dir = True
+        else:
+            is_dir = content and isinstance(content, dict)
+            
+        item_path = base_path / name
+        
+        if is_dir:
+           
+            try:
+                item_path.mkdir(exist_ok=force)
+                if not item_path.exists() or force:
+                    typer.echo(f"Created directory: {item_path}")
+                    counts['folders'] += 1
+                
+                
+                if content:
+                    sub_counts = process_structure(content, item_path, force)
+                    counts['files'] += sub_counts['files']
+                    counts['folders'] += sub_counts['folders']
+                    
+            except FileExistsError:
+                typer.echo(f"Skipping existing directory (use --force to overwrite): {item_path}")
+                
+        else:
+             
+            try:
+                if item_path.exists() and not force:
+                    typer.echo(f"Skipping existing file (use --force to overwrite): {item_path}")
+                    continue
+                    
+                
+                item_path.parent.mkdir(parents=True, exist_ok=True)
+                
+                
+                if content is None:
+                    content = ""
+                item_path.write_text(str(content), encoding='utf-8')
+                typer.echo(f"Created file: {item_path}")
+                counts['files'] += 1
+                
+            except Exception as e:
+                typer.echo(f"Error creating file {item_path}: {e}")
+    
+    return counts
 
 
 
