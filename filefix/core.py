@@ -84,3 +84,21 @@ def organize(directory: str = typer.Argument(".", help="Directory to organize"))
             except OSError as e:
                 typer.echo(f"Error moving '{filename}': {e}")
                 print(f"Error moving '{filename}': {e}")
+
+
+
+
+#list categ
+@app.command()
+def list_categories():
+    """List all file categories and their extensions."""
+    categories = {}
+    for ext, cat in FILE_CATEGORIES.items():
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append(ext)
+    
+    typer.echo("📁 File Categories:")
+    for category, extensions in sorted(categories.items()):
+        typer.echo(f"  {category}: {', '.join(extensions)}")
+
