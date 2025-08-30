@@ -132,3 +132,12 @@ def undo_organize(directory: str = typer.Argument(".", help="Directory to undo o
                 typer.echo(f"Moved '{filename}' to '{target_folder}'")
             except OSError as e:
                 typer.echo(f"Error moving '{filename}': {e}")
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    app()
