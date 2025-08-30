@@ -2,3 +2,5 @@ os
 typer
 pyyaml
 datetime
+yaml
+rich
