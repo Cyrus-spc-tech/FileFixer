@@ -85,7 +85,23 @@ def organize(directory: str = typer.Argument(".", help="Directory to organize"))
             except OSError as e:
                 typer.echo(f"Error moving '{filename}': {e}")
                 print(f"Error moving '{filename}': {e}")
+#empty rmv
+@app.command()
+def clean(directory: str = typer.Argument(".", help="Directory to clean empty folders from")):
+    """Directory to clean empty folders from """
+    if not os.path.isdir(directory):
+        typer.echo(f"Error: '{directory}' is not a valid directory.")
+        raise typer.Exit(code=1)
 
+    for root, dirs, _ in os.walk(directory, topdown=False):
+        for folder in dirs:
+            folder_path = os.path.join(root, folder)
+            try:
+                if not os.listdir(folder_path):  # Check if folder is empty
+                    os.rmdir(folder_path)
+                    typer.echo(f"Deleted empty folder: '{folder_path}'")
+            except OSError as e:
+                typer.echo(f"Error deleting '{folder_path}': {e}")
 
 
 
