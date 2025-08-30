@@ -1,0 +1,10 @@
+project_name/:
+  README.md: |
+    # Project Title
+    Created on: {{date}}
+  src/:
+    _init_.py: ""
+    main.py: |
+      def main():
+          print("Hello, World!")
+      
