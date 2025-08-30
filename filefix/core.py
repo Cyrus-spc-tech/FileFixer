@@ -102,3 +102,33 @@ def list_categories():
     for category, extensions in sorted(categories.items()):
         typer.echo(f"  {category}: {', '.join(extensions)}")
 
+
+
+
+
+
+# restore
+@app.command()
+def undo_organize(directory: str = typer.Argument(".", help="Directory to undo organize from")):
+    """Directory to undo organize from"""
+    if not os.path.isdir(directory):
+        typer.echo(f"Error: '{directory}' is not a valid directory.")
+        raise typer.Exit(code=1)
+
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if os.path.isfile(file_path):
+            _, ext = os.path.splitext(filename)
+            ext = ext.lower()
+            
+            target_folder = FILE_CATEGORIES.get(ext, "Others")
+            target_path = os.path.join(directory, target_folder)
+            
+            os.makedirs(target_path, exist_ok=True)
+            
+            new_path = os.path.join(target_path, filename)
+            try:
+                os.rename(file_path, new_path)
+                typer.echo(f"Moved '{filename}' to '{target_folder}'")
+            except OSError as e:
+                typer.echo(f"Error moving '{filename}': {e}")
