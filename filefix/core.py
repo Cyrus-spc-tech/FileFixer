@@ -86,6 +86,11 @@ def organize(directory: str = typer.Argument(".", help="Directory to organize"))
                 typer.echo(f"Error moving '{filename}': {e}")
                 print(f"Error moving '{filename}': {e}")
 
+
+
+
+
+#yaml
 @app.command()
 def create_structure(
     template_path: str = typer.Argument(..., help="Path to the YAML template file"),
