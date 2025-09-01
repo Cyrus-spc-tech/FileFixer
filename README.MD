@@ -18,6 +18,9 @@ It will help to organize and manage files in a more organized way so that users 
 pip install filefix
 ```
 
+# Tesecase Image 
+![image](/Testcase.png)
+
 ## Contributing
 
 (Open Source Project) Anyone can contribute to this project.
