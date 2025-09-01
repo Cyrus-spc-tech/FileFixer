@@ -105,6 +105,17 @@ def clean(directory: str = typer.Argument(".", help="Directory to clean empty fo
 
 
 
+#add category 
+@app.command()
+def add_category( 
+    category_name: str = typer.Argument(..., help="Name of the category"),
+    extension: str = typer.Argument(..., help="Extension of the category")
+):
+    """Add a new file category."""
+    FILE_CATEGORIES[extension] = category_name
+    typer.echo(f"Added category '{category_name}' with extension '{extension}'")
+
+
 
 #yaml
 @app.command()
