@@ -116,6 +116,39 @@ def add_category(
     typer.echo(f"Added category '{category_name}' with extension '{extension}'")
 
 
+# stats
+@app.command()
+def stats(directory: str = typer.Argument(".", help="Directory to get stats from")):
+    """Directory to get stats from"""
+    if not os.path.isdir(directory):
+        typer.echo(f"Error: '{directory}' is not a valid directory.")
+        raise typer.Exit(code=1)
+
+    total_files = 0
+    file_types = {}
+    size=0
+
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if os.path.isfile(file_path):
+            _, ext = os.path.splitext(filename)
+            ext = ext.lower()
+            
+            total_files += 1
+            size+=os.path.getsize(file_path)
+            if ext in file_types:
+                file_types[ext] += 1
+            else:
+                file_types[ext] = 1
+    
+    typer.echo(f"Total files: {total_files}")
+    typer.echo(f"Total size: {size}")
+    for ext, count in file_types.items():
+        typer.echo(f"  {ext}: {count}")
+
+
+
+
 
 #yaml
 @app.command()
