@@ -1,14 +1,15 @@
 Metadata-Version: 2.4
 Name: filefix
-Version: 0.1.1
+Version: 0.1.2
 Summary: A CLI toolkit to organize files effectively.
 Home-page: https://github.com/Cyrus-spc-tech/FileFixer.git
-Author: 
+Author: cyrus
 Description-Content-Type: text/markdown
 Requires-Dist: typer
 Requires-Dist: pyyaml
 Requires-Dist: datetime
 Requires-Dist: rich
+Dynamic: author
 Dynamic: description
 Dynamic: description-content-type
 Dynamic: home-page
