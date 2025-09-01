@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="filefix",
-    author="",
-    version="0.1.1",
+    author="cyrus",
+    version="0.1.2",
     packages=find_packages(),
     install_requires=[
         'typer',
