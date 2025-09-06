@@ -5,6 +5,7 @@ from typing import Dict, Union
 from pathlib import Path
 from datetime import datetime
 from rich import print
+from rich.table import Table
 
 app = typer.Typer(help="A CLI tool to organize files in a directory.")
 
@@ -80,11 +81,17 @@ def organize(directory: str = typer.Argument(".", help="Directory to organize"))
             new_path = os.path.join(target_path, filename)
             try:
                 os.rename(file_path, new_path)
-                typer.echo(f"Moved '{filename}' to '{target_folder}'")
-                print(f"Moved '{filename}' to '{target_folder}'")
+                table = Table(show_header=True, header_style="bold magenta")
+                table.add_column("File", style="cyan")
+                table.add_column("Moved to", style="green")
+                table.add_row(filename, target_folder)
+                print(table)
             except OSError as e:
-                typer.echo(f"Error moving '{filename}': {e}")
-                print(f"Error moving '{filename}': {e}")
+                table = Table(show_header=True, header_style="bold magenta")
+                table.add_column("File", style="cyan")
+                table.add_column("Error", style="red")
+                table.add_row(filename, str(e))
+                print(table)
 #empty rmv
 @app.command()
 def clean(directory: str = typer.Argument(".", help="Directory to clean empty folders from")):
