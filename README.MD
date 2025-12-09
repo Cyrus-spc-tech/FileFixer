@@ -11,6 +11,7 @@ It will help to organize and manage files in a more organized way so that users 
 - Add a new file category.
 - Remove a file category.
 - Undo organize files in a directory.
+- Clean Temporary file from system and folders .
 
 ## Installation
 
@@ -18,7 +19,8 @@ It will help to organize and manage files in a more organized way so that users 
 pip install filefix
 ```
 
-# Tesecase Image 
+# Tesecase Image
+
 ![image](/Testcase.png)
 
 ## Contributing
