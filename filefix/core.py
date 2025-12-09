@@ -1,6 +1,8 @@
 import yaml
 import typer
 import os
+import shutil
+import tempfile
 from typing import Dict, Union
 from pathlib import Path
 from datetime import datetime
@@ -341,8 +343,65 @@ def undo_organize(directory: str = typer.Argument(".", help="Directory to undo o
 
 
 
-
-
+@app.command()
+def clean_temp(
+    skip_confirmation: bool = typer.Option(
+        False, 
+        "--yes", "-y", 
+        help="Skip confirmation before deletion"
+    )
+):
+    """
+    Clean Windows temporary files from both system and user temp folders.
+    WARNING: This will permanently delete temporary files.
+    """
+    temp_dirs = [
+        os.path.join(os.environ.get('SystemRoot', 'C:\\Windows'), 'Temp'),
+        os.environ.get('TEMP', ''),
+        tempfile.gettempdir()
+    ]
+    
+    # Remove duplicates and non-existent directories
+    temp_dirs = list(set(d for d in temp_dirs if d and os.path.exists(d)))
+    
+    if not temp_dirs:
+        typer.echo("No temporary directories found to clean.")
+        return
+    
+    # Show what will be cleaned
+    typer.echo("The following temporary directories will be cleaned:")
+    for d in temp_dirs:
+        typer.echo(f"  - {d}")
+    
+    if not skip_confirmation:
+        confirm = typer.confirm("Are you sure you want to delete these temporary files?")
+        if not confirm:
+            typer.echo("Operation cancelled.")
+            return
+    
+    # Clean each directory
+    total_deleted = 0
+    for temp_dir in temp_dirs:
+        try:
+            typer.echo(f"\nCleaning {temp_dir}...")
+            deleted_count = 0
+            for filename in os.listdir(temp_dir):
+                file_path = os.path.join(temp_dir, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                        deleted_count += 1
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path, ignore_errors=True)
+                        deleted_count += 1
+                except Exception as e:
+                    typer.echo(f"  Could not delete {file_path}: {e}")
+            typer.echo(f"Successfully cleaned {deleted_count} items from {temp_dir}")
+            total_deleted += deleted_count
+        except Exception as e:
+            typer.echo(f"Error cleaning {temp_dir}: {e}")
+    
+    typer.echo(f"\nTemporary files cleanup complete! Removed {total_deleted} items in total.")
 
 
 if __name__ == "__main__":
