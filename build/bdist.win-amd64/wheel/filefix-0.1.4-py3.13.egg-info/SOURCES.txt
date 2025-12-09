@@ -1,0 +1,10 @@
+README.md
+setup.py
+filefix/__init__.py
+filefix/core.py
+filefix.egg-info/PKG-INFO
+filefix.egg-info/SOURCES.txt
+filefix.egg-info/dependency_links.txt
+filefix.egg-info/entry_points.txt
+filefix.egg-info/requires.txt
+filefix.egg-info/top_level.txt
