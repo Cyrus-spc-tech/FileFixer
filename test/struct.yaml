@@ -1,0 +1,26 @@
+project:
+  name: "Book Collection"
+  version: "1.0"
+  files:
+    - name: "book_collection.yaml"
+      type: "yaml"
+      path: "data/book_collection.yaml"
+    - name: "readme.md"
+      type: "markdown"
+      path: "docs/readme.md"
+    - name: "book_data_parser.py"
+      type: "python"
+      path: "scripts/book_data_parser.py"
+  directories:
+    - name: "data"
+      path: "data"
+      files:
+        - "book_collection.yaml"
+    - name: "docs"
+      path: "docs"
+      files:
+        - "readme.md"
+    - name: "scripts"
+      path: "scripts"
+      files:
+        - "book_data_parser.py"
